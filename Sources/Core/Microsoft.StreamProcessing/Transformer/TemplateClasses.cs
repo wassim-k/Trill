@@ -26,8 +26,11 @@ namespace Microsoft.StreamProcessing
 {
     internal static class Transformer
     {
-        private static readonly bool IsNetCore = RuntimeInformation.FrameworkDescription.Contains(".NET Core") ||
-            RuntimeInformation.FrameworkDescription.Contains(".NET 5") || RuntimeInformation.FrameworkDescription.Contains(".NET 6");
+        private static readonly bool IsNetCore =
+            RuntimeInformation.FrameworkDescription.Contains(".NET Core") ||
+            RuntimeInformation.FrameworkDescription.Contains(".NET 5") ||
+            RuntimeInformation.FrameworkDescription.Contains(".NET 6") ||
+            RuntimeInformation.FrameworkDescription.Contains(".NET 7");
 
         private static readonly Lazy<IEnumerable<MetadataReference>> baseAssemblyReferences
             = new Lazy<IEnumerable<MetadataReference>>(() => IsNetCore ? GetNetCoreAssemblyReferences() : GetNetFrameworkAssemblyReferences());
@@ -788,7 +791,7 @@ namespace System.Runtime.CompilerServices
             this.assemblyReferences.AddRange(Transformer.AssemblyReferencesNeededFor(keyType));
             this.keyType = keyType;
 
-#region Decompose TPayload into columns
+            #region Decompose TPayload into columns
             var payloadType = payloadRepresentation.RepresentationFor;
             this.assemblyReferences.AddRange(Transformer.AssemblyReferencesNeededFor(payloadType));
             this.payloadType = payloadType;
@@ -797,7 +800,7 @@ namespace System.Runtime.CompilerServices
             this.types = new HashSet<Type>(payloadTypes.Distinct());
 
             this.assemblyReferences.AddRange(this.types.SelectMany(t => Transformer.AssemblyReferencesNeededFor(t)));
-#endregion
+            #endregion
 
             this.generatedClassName = Transformer.GetMemoryPoolClassName(keyType, payloadType);
             this.className = this.generatedClassName.CleanUpIdentifierName();
